@@ -1,0 +1,237 @@
+
+<style>
+  .sr-only{position:absolute;left:-9999px}
+  body{margin:0;padding:0}
+  .shell{display:flex;height:560px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+  .sidebar{width:200px;border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;background:var(--color-background-secondary);flex-shrink:0}
+  .logo{padding:16px 16px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .logo-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .logo-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+  .nav{padding:12px 8px;display:flex;flex-direction:column;gap:4px}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);transition:background .15s;border:none;background:none;text-align:left;width:100%}
+  .nav-item:hover{background:var(--color-background-primary)}
+  .nav-item.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
+  .nav-item i{font-size:16px;opacity:.7}
+  .nav-item.active i{opacity:1}
+  .nav-section{font-size:10px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.05em;padding:8px 10px 4px;text-transform:uppercase}
+  .sidebar-footer{margin-top:auto;padding:12px;border-top:0.5px solid var(--color-border-tertiary)}
+  .kg-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary)}
+  .kg-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75;flex-shrink:0}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px}
+  .topbar-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .topbar-sub{font-size:12px;color:var(--color-text-secondary);margin-left:auto}
+  .panel{flex:1;overflow:auto;padding:16px}
+  .panel.hidden{display:none}
+
+  .chat-wrap{display:flex;flex-direction:column;height:100%;gap:0}
+  .chat-msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:8px}
+  .msg{display:flex;gap:8px;align-items:flex-start}
+  .msg-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+  .msg-avatar.user{background:var(--color-background-info);color:var(--color-text-info)}
+  .msg-avatar.ai{background:#E1F5EE;color:#085041}
+  .msg-bubble{font-size:12px;line-height:1.6;color:var(--color-text-primary);max-width:90%}
+  .cite-tag{font-size:10px;display:inline-block;background:var(--color-background-success);color:var(--color-text-success);border-radius:4px;padding:0 5px;margin-left:3px;font-weight:500}
+  .chat-input-row{display:flex;gap:8px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)}
+  .chat-input-row input{flex:1;font-size:12px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary)}
+  .chat-input-row button{font-size:12px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer}
+  .chat-input-row button:hover{background:var(--color-background-tertiary)}
+
+  .checker-form{display:flex;flex-direction:column;gap:12px}
+  .field-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px}
+  .checker-form select,.checker-form textarea{width:100%;box-sizing:border-box;font-size:12px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary)}
+  .checker-form textarea{resize:none;height:72px}
+  .run-btn{font-size:12px;font-weight:500;padding:8px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer;display:flex;align-items:center;gap:6px}
+  .run-btn:hover{background:var(--color-background-tertiary)}
+  .result-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-top:4px}
+  .result-header{padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500}
+  .result-header.risk-low{background:#E1F5EE;color:#085041}
+  .result-header.risk-med{background:#FAEEDA;color:#633806}
+  .result-header.risk-high{background:#FCEBEB;color:#791F1F}
+  .result-body{padding:12px;font-size:12px;line-height:1.6;color:var(--color-text-secondary)}
+  .result-cite{font-size:11px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);color:var(--color-text-tertiary)}
+
+  .predictor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pred-field{display:flex;flex-direction:column;gap:4px}
+  .pred-field select{font-size:12px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary)}
+  .outcome-row{display:flex;gap:10px;margin-top:12px}
+  .outcome-card{flex:1;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;text-align:center}
+  .outcome-pct{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+  .outcome-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+  .precedent-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .precedent-item{font-size:12px;padding:8px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);color:var(--color-text-secondary);cursor:pointer}
+  .precedent-item:hover{background:var(--color-background-secondary)}
+  .precedent-item strong{color:var(--color-text-primary)}
+</style>
+<h2 class="sr-only">Lex Kenya — Legal Intelligence Platform mockup showing Q&A chat, compliance checker, and court ruling predictor</h2>
+<div class="shell">
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-title">Lex Kenya</div>
+      <div class="logo-sub">Legal Intelligence Platform</div>
+    </div>
+    <div class="nav">
+      <div class="nav-section">Modules</div>
+      <button class="nav-item active" onclick="show('chat',this)" aria-pressed="true">
+        <i class="ti ti-message-circle" aria-hidden="true"></i> Q&A Assistant
+      </button>
+      <button class="nav-item" onclick="show('checker',this)">
+        <i class="ti ti-shield-check" aria-hidden="true"></i> Compliance Checker
+      </button>
+      <button class="nav-item" onclick="show('predictor',this)">
+        <i class="ti ti-gavel" aria-hidden="true"></i> Ruling Predictor
+      </button>
+      <div class="nav-section" style="margin-top:8px">Sources</div>
+      <button class="nav-item" onclick="sendPrompt('What Acts are in the Lex Kenya knowledge graph?')">
+        <i class="ti ti-file-text" aria-hidden="true"></i> Acts & Statutes
+      </button>
+      <button class="nav-item" onclick="sendPrompt('Which courts case law is in the knowledge graph?')">
+        <i class="ti ti-building-arch" aria-hidden="true"></i> Case Law
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="kg-badge"><div class="kg-dot"></div>Knowledge graph active</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="panel-chat" class="panel">
+      <div class="chat-wrap">
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg">
+            <div class="msg-avatar ai">LK</div>
+            <div class="msg-bubble">Hello. I can answer questions about Kenyan constitutional law, corporate acts, and case law from all five major courts. What would you like to know?</div>
+          </div>
+          <div class="msg">
+            <div class="msg-avatar user">U</div>
+            <div class="msg-bubble">What are the requirements to incorporate a private company in Kenya?</div>
+          </div>
+          <div class="msg">
+            <div class="msg-avatar ai">LK</div>
+            <div class="msg-bubble">
+              Under the <strong>Companies Act 2015</strong>, a private limited company requires a minimum of one shareholder and one director. <span class="cite-tag">§ 11(1)</span><br><br>
+              The company must be registered with the Registrar of Companies and must file a Memorandum and Articles of Association. <span class="cite-tag">§ 24</span> The name must not be identical or deceptively similar to an existing registered company. <span class="cite-tag">§ 56(2)</span><br><br>
+              In <em>Mwangi v Kariuki [2019] eKLR</em>, the Court of Appeal affirmed that failure to file the prescribed forms within 30 days renders the incorporation voidable. <span class="cite-tag">CA 2019</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-in" placeholder="Ask about Kenyan law…" onkeydown="if(event.key==='Enter')sendChat()">
+          <button onclick="sendChat()">Send <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-checker" class="panel hidden">
+      <div class="checker-form">
+        <div>
+          <div class="field-label">Action type</div>
+          <select>
+            <option>Director appointing a related-party vendor</option>
+            <option>Share buyback by private company</option>
+            <option>Foreign investor acquiring >40% stake</option>
+            <option>Employee share option scheme (ESOP)</option>
+            <option>Dividend declaration without profits</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label">Describe the specific action</div>
+          <textarea placeholder="e.g. ABC Ltd wishes to appoint its CEO's spouse as sole supplier of IT services at Ksh 8M/year without board approval…"></textarea>
+        </div>
+        <button class="run-btn" onclick="sendPrompt('How does the compliance checker work in the Lex Kenya platform?')">
+          <i class="ti ti-player-play" aria-hidden="true"></i> Run compliance check ↗
+        </button>
+        <div class="result-card">
+          <div class="result-header risk-high"><i class="ti ti-alert-triangle" aria-hidden="true"></i> High compliance risk</div>
+          <div class="result-body">
+            This action likely constitutes a <strong>related party transaction</strong> requiring prior board approval and shareholder disclosure under the Companies Act 2015 § 142–144. The CEO's interest must be declared at a board meeting where the CEO may not vote.<br><br>
+            Proceeding without disclosure may expose directors to personal liability under § 149 (breach of fiduciary duty).
+          </div>
+          <div class="result-cite">
+            Sources: Companies Act 2015 §§ 142, 143, 144, 149 · Capital Markets Act § 31 · <em>Oluoch v Nairobi Finance Ltd [2021] eKLR</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-predictor" class="panel hidden">
+      <div class="predictor-grid">
+        <div class="pred-field">
+          <div class="field-label">Court</div>
+          <select>
+            <option>Court of Appeal</option>
+            <option>High Court (Commercial)</option>
+            <option>Environment & Land Court</option>
+            <option>Employment & Labour Relations</option>
+            <option>Supreme Court</option>
+          </select>
+        </div>
+        <div class="pred-field">
+          <div class="field-label">Dispute type</div>
+          <select>
+            <option>Shareholder oppression</option>
+            <option>Wrongful dismissal</option>
+            <option>Contract breach</option>
+            <option>Director fiduciary breach</option>
+            <option>Land title dispute</option>
+          </select>
+        </div>
+        <div class="pred-field">
+          <div class="field-label">Claimant type</div>
+          <select>
+            <option>Minority shareholder</option>
+            <option>Employee</option>
+            <option>Creditor</option>
+            <option>Regulator (CMA)</option>
+          </select>
+        </div>
+        <div class="pred-field">
+          <div class="field-label">Remedy sought</div>
+          <select>
+            <option>Damages</option>
+            <option>Injunction</option>
+            <option>Winding up</option>
+            <option>Reinstatement</option>
+          </select>
+        </div>
+      </div>
+      <button class="run-btn" style="margin-top:12px" onclick="sendPrompt('How does the court ruling predictor use the knowledge graph?')">
+        <i class="ti ti-player-play" aria-hidden="true"></i> Predict likely outcome ↗
+      </button>
+      <div class="outcome-row">
+        <div class="outcome-card"><div class="outcome-pct">68%</div><div class="outcome-label">Claimant succeeds</div></div>
+        <div class="outcome-card"><div class="outcome-pct">22%</div><div class="outcome-label">Partial remedy</div></div>
+        <div class="outcome-card"><div class="outcome-pct">10%</div><div class="outcome-label">Dismissed</div></div>
+      </div>
+      <div class="precedent-list">
+        <div class="field-label" style="margin-top:4px">Most relevant precedents from graph</div>
+        <div class="precedent-item" onclick="sendPrompt('Tell me about Kamau v Savanna Holdings 2020 eKLR')"><strong>Kamau v Savanna Holdings [2020] eKLR</strong> — minority buyout ordered, CA upheld</div>
+        <div class="precedent-item" onclick="sendPrompt('Tell me about Odhiambo v Equity Ventures 2018 eKLR')"><strong>Odhiambo v Equity Ventures [2018] eKLR</strong> — oppression established, winding up refused</div>
+        <div class="precedent-item" onclick="sendPrompt('Tell me about Re Pioneer Flowers Ltd 2022 eKLR')"><strong>Re Pioneer Flowers Ltd [2022] eKLR</strong> — damages awarded, injunction denied</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, el) {
+  ['chat','checker','predictor'].forEach(p => {
+    document.getElementById('panel-'+p).classList.toggle('hidden', p !== id);
+  });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+function sendChat() {
+  const inp = document.getElementById('chat-in');
+  const val = inp.value.trim();
+  if(!val) return;
+  const msgs = document.getElementById('chat-msgs');
+  const bubble = document.createElement('div');
+  bubble.className = 'msg';
+  bubble.innerHTML = '<div class="msg-avatar user">U</div><div class="msg-bubble">'+val+'</div>';
+  msgs.appendChild(bubble);
+  inp.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+  sendPrompt(val + ' (in the context of Kenyan corporate law)');
+}
+</script>
