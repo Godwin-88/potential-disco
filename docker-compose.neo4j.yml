@@ -1,0 +1,21 @@
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: neo4j_local
+    ports:
+      - "7475:7474"   # browser  (7474 may conflict)
+      - "7688:7687"   # bolt     (7687 taken by Memgraph)
+    environment:
+      NEO4J_AUTH: neo4j/localpassword
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      # Allow large property values (embeddings)
+      NEO4J_dbms_memory_heap_initial__size: "512m"
+      NEO4J_dbms_memory_heap_max__size: "2g"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+
+volumes:
+  neo4j_data:
+  neo4j_logs:

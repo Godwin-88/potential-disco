@@ -24,6 +24,7 @@ backend/celerybeat-schedule
 node_modules/
 admin/node_modules/
 admin/dist/
+frontend/dist/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -41,7 +42,7 @@ mobile/android/.gradle/
 mobile/android/local.properties
 
 # Environment Variables (CRITICAL - NEVER COMMIT)
-#.env
+.env
 .env.local
 .env.*.local
 *.env
@@ -82,6 +83,10 @@ Centiwise_Integration_Guide.pdf
 *.pdf
 *.zip
 *.tar.gz
+
+# Neo4j data dumps (large, may contain sensitive data)
+neo4j_dump.json
+*.dump
 
 # Temporary files
 tmp/
